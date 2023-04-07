@@ -103,3 +103,13 @@ theme: butterfly
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: ''
+
+math:
+  engine: mathjax  # or katex, depending on your preference
+  mathjax:
+    cdn: https://cdn.jsdelivr.net/npm/mathjax@3/es5/
+mermaid:
+  enable: true
+  # Available themes: default | dark | forest | neutral
+  theme: default
+
