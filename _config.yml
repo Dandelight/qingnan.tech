@@ -8,7 +8,7 @@ subtitle: ''
 description: ''
 keywords:
 author: 青南
-language: en
+language: zh-CN
 timezone: ''
 
 # URL
@@ -112,4 +112,3 @@ mermaid:
   enable: true
   # Available themes: default | dark | forest | neutral
   theme: default
-

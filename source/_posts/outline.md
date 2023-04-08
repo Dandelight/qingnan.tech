@@ -1,7 +1,8 @@
 ---
-title: outline
+title: 课程大纲
 date: 2023-04-07 22:47:39
 tags:
+  - 小小逗
 ---
 
 ## 总述
@@ -28,7 +29,7 @@ tags:
 4. Protobuf 的安装（尤其是 dart 扩展的安装）
 5. 编译
 6. 编写新的 `.proto` 文件
-7. 杂谈：`protobuf` 与 `gPRC`
+7. 杂谈：`protobuf` 与 `gRPC`
 
 ## SpringBoot 部分
 
@@ -53,4 +54,3 @@ tags:
 ## 总结
 
 能走到这一步的，欢迎加入我们的团队，一起写下我们的故事。
-
