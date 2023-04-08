@@ -7,11 +7,13 @@ tags:
 
 ## 总述
 
+1. 如何制作一款 app 并在国内应用市场上架
+
 项目需求、预期目标
 
 ## `Flutter` 部分
 
-1. `Flutter` 的安装、创建项目、运行、`DevTool` 调试
+1. `Flutter` 的安装、创建项目、运行、`DevTools` 调试
 2. `Dart` 相关：`null-safety`
 3. UI = f(状态)：`Widget`，`StatelessWidget`、`StatefulWidget`，`setState`
 4. 界面设计：Material Design、`Scaffold`、`Container`、容器类、布局类、列表类、文字类、按钮类、图片类、动画、手势、`Sliver`
