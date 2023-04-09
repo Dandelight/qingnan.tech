@@ -29,6 +29,7 @@ tags:
   * Weex: 阿里出品，类似于 RN
   * Taro: 京东、58同城出品，编译到 RN
   * Xamarin: 微软出品，C#，落寞了
+  * Qt Mobile: C++，落寞了
 * `WebView` + `JSBridge` 型
   * Ionic: 多种 Web 框架，但国内用得不多
   * NativeScript: 国内用得不多

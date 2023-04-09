@@ -5,6 +5,12 @@ tags:
   - Flutter
 ---
 
+## 优质学习资料
+
+* Flutter 官方文档：<https://flutter.dev/docs>
+* *Flutter in Action*, Manning：<https://www.manning.com/books/flutter-in-action>
+* Flutter 实战指南：<https://book.flutterchina.club/>
+
 ## Flutter 将是下一代全平台开发框架
 
 Google 的下一代操作系统 Fuchsia 将会基于 Flutter 来开发，但为了布局，Flutter 支持了现有的六大平台。
