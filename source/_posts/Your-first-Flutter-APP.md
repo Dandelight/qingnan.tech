@@ -27,6 +27,8 @@ Google 的下一代操作系统 Fuchsia 将会基于 Flutter 来开发，但为�
 
 通过镜像安装：https://mirrors.tuna.tsinghua.edu.cn/help/flutter/
 
+`macOS` 贴到 `~/.zshrc`里；
+
 ```shell
 export FLUTTER_STORAGE_BASE_URL="https://mirrors.tuna.tsinghua.edu.cn/flutter"
 export PUB_HOSTED_URL="https://mirrors.tuna.tsinghua.edu.cn/dart-pub"
@@ -60,6 +62,10 @@ flutter create $应用名 --org $组织名
 ```shell
 flutter run
 ```
+
+## `pubspec.yaml`
+
+类似 `packages.json`，项目名称、推送到中心仓库、版本管理、依赖管理、项目配置
 
 ## `DevTools`
 
