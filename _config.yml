@@ -40,7 +40,6 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
 relative_link: false
 future: true
 highlight:
@@ -112,3 +111,7 @@ mermaid:
   enable: true
   # Available themes: default | dark | forest | neutral
   theme: default
+post_asset_folder: true
+marked:
+  prependRoot: true
+  postAsset: true
