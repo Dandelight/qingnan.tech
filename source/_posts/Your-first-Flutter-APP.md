@@ -167,13 +167,175 @@ Material Design 是 Google 推出的一套设计标准。大多数 Flutter APP �
 
 ### `Scaffold`
 
-### `Material` 库中的 `Widget`
+### 基础 `Widget`
 
-`pub.dev` 包管理
-`Navigator` 路由管理
+`Flutter` 中提供了一些基础组件，比如
 
-项目：做一个简单的翻译软件（调用彩云 API）
+#### 界面展示类
 
-## 深入理解
+* 文本类
+  * `Text`：文本
+  * `TextSpan`：文本片段
+* 按钮类
+  * `ElevatedButton`：突出按钮
+  * `TextButton`：文本按钮
+  * `OutlineButton`：边框按钮
+  * 前三种都有 `icon` 属性，可以加一个图标
+  * `IconButton`：单图标按钮
+* 图片
+  * `ImageProvider`: 抽象类，有 `loadBuffer` 等方法，用于加载图片，常用的实现有
+    * `AssetImage`：加载**资源**图片（资源是什么以后会讲）
+    * `NetworkImage`：加载网络图片
+    * `CachedNetworkImage`：由第三方库[cached_network_image](https://pub.dev/packages/cached_network_image)提供，加载网络图片并缓存
+  * `Image`：图片组件
+    * `image`
+    * `width`
+    * `color`
+    * `colorBlendMode`
+    * `fit`
+    * `alignment`
+    * `repeat`
+* Icon
+  * Flutter 提供了 `Material Design` 的图标，所有图标可以在其官网查看：<https://material.io/tools/icons/>
+  * 可以用 `Icons` 来获取，实际上每个图标对应一个 Unicode 字符，，在 `Text` 组件中输入 `\u` 可以查看。
+  * 也可以通过加载自定义字体的方式来使用自定义图标
+* 进度指示器
+  * `LinearProgressIndicator`：线性进度条
+  * `CircularProgressIndicator`：圆形进度条
 
-* `Key`：一般情况下不需要考虑，但如果有**大量同类 `Widget` 的排序、删除、插入**的需求时，就需要考虑 `Key` 了。
+
+#### 用户输入类
+
+* 开关与复选框
+  * `Switch`
+  * `Checkbox`
+* 输入框及表单
+  * `TextField` 用于简单的文本输入
+  * `Form` 用于复杂的表单输入，可以包括多个输入框，支持输入校验。
+    * `Form` 的直接 `children` 必须继承 `FormField` 抽象类
+
+#### 容器类
+
+你做一个 APP 总不能只放一列文字图片输入框吧，但不同于 `CSS`，你无法用类似选择器的东西直接给一个 `Widget` 设置 `margin`、`padding`、`border` 等属性，这就需要容器类组件。
+
+容器类组件中，`Container` 是一个 holistic 全能型的组件，可以设置 `margin`、`padding`、`border`、`decoration`、`transform` 等位置偏移，也可以设置 `width`、`height`、`color` 等属性。但它的属性太多了，有时候会让人感到迷惑，让人好奇它怎么实现的。如果去看它的源码，你会发现它的属性实际上是由 `Decoration`、`ConstrainedBox`、`Transform`、`Padding`、`Align`、`FittedBox` 等组件组合而成的。所以，如果只需要设置某个单个属性，可以直接使用这些组件。
+
+```dart
+Container(
+  constraints: BoxConstraints.expand(
+    height: Theme.of(context).textTheme.headlineMedium!.fontSize! * 1.1 + 200.0,
+  ),
+  padding: const EdgeInsets.all(8.0),
+  color: Colors.blue[600],
+  alignment: Alignment.center,
+  transform: Matrix4.rotationZ(0.1),
+  child: Text('Hello World',
+    style: Theme.of(context)
+        .textTheme
+        .headlineMedium!
+        .copyWith(color: Colors.white)),
+)
+```
+
+它的源码是这样的：
+
+```dart
+  @override
+  Widget build(BuildContext context) {
+    Widget? current = child;
+
+    if (child == null && (constraints == null || !constraints!.isTight)) {
+      current = LimitedBox(
+        maxWidth: 0.0,
+        maxHeight: 0.0,
+        child: ConstrainedBox(constraints: const BoxConstraints.expand()),
+      );
+    } else if (alignment != null) {
+      current = Align(alignment: alignment!, child: current);
+    }
+
+    final EdgeInsetsGeometry? effectivePadding = _paddingIncludingDecoration;
+    if (effectivePadding != null) {
+      current = Padding(padding: effectivePadding, child: current);
+    }
+
+    if (color != null) {
+      current = ColoredBox(color: color!, child: current);
+    }
+
+    if (clipBehavior != Clip.none) {
+      assert(decoration != null);
+      current = ClipPath(
+        clipper: _DecorationClipper(
+          textDirection: Directionality.maybeOf(context),
+          decoration: decoration!,
+        ),
+        clipBehavior: clipBehavior,
+        child: current,
+      );
+    }
+
+    if (decoration != null) {
+      current = DecoratedBox(decoration: decoration!, child: current);
+    }
+
+    if (foregroundDecoration != null) {
+      current = DecoratedBox(
+        decoration: foregroundDecoration!,
+        position: DecorationPosition.foreground,
+        child: current,
+      );
+    }
+
+    if (constraints != null) {
+      current = ConstrainedBox(constraints: constraints!, child: current);
+    }
+
+    if (margin != null) {
+      current = Padding(padding: margin!, child: current);
+    }
+
+    if (transform != null) {
+      current = Transform(transform: transform!, alignment: transformAlignment, child: current);
+    }
+
+    return current!;
+  }
+```
+
+可以看见它是把
+
+* `LimitedBox`
+* `Align`
+* `Padding`
+* `ColoredBox`
+* `ClipPath`
+* `DecoratedBox`
+* `ConstrainedBox`
+* `Transform`
+
+组合起来的。下面我们介绍单个组件。
+
+* 限制类
+  * `LimitedBox`：限制最大宽高的组件
+  * `ConstraintsBox`：限制最大最小宽高的组件
+  * `SizedBox`：限制宽高的组件
+  * `FittedBox`：拉伸子组件到填满自己
+* 对齐类
+  * `Align`
+  * `Center`
+* 边界类
+  * `Padding`
+  * ~~`Margin`~~：`Flutter` 中设置边界的方式只有 `Padding`，`Container` 的 `margin` 属性也是通过 `Padding` 实现的。
+* 装饰类
+  * `DecoratedBox`
+  * `ColoredBox`
+* 变换类
+  * `Transform`
+  * `RotatedBox`
+* 裁剪类
+  * `ClipOval`: 裁剪为椭圆
+  * `ClipRRect`: 裁剪为圆角矩形
+  * `ClipRect`: 裁剪为矩形
+  * `ClipPath`: 裁剪为自定义路径
+  * `CustomClipper`: 自定义裁剪方法
