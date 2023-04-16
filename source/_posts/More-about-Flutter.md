@@ -251,6 +251,7 @@ class MyHomePage extends StatelessWidget {
   + `Map`
   + `Set`
   + `List`
+* `devtools`
 
 ## 项目：个人字典
 
