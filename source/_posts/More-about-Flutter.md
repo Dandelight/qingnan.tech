@@ -119,7 +119,7 @@ CSS 是 Web 开发的标准语言，因语法简洁、功能强大也被设计�
 
 * `Key`：一般情况下不需要考虑，但如果有**大量同类 `Widget` 的排序、删除、插入**的需求时，就需要考虑 `Key` 了。
 
-可以去 GitHub 上搜索 `flutter`，你会发现有很多开源的 `Flutter` 组件，比如 `fluttertoast`、`flutter_swiper`、`flutter_staggered_grid_view` 等。
+可以去 GitHub 上搜索 `flutter`，会发现很多样例 APP。
 
 ## 包管理
 
@@ -127,10 +127,95 @@ CSS 是 Web 开发的标准语言，因语法简洁、功能强大也被设计�
 * `pubspec.yaml`
 * 使用包（以 `fluttertoast` 为例）
 * 包冲突与解决
+* 一些常用的 `Flutter` 组件，比如 `fluttertoast`、`flutter_swiper`、`flutter_staggered_grid_view`、`fluwx` 等。
 
 ## 高级状态管理
 
-* `Provider`
+Flutter 基本的状态管理方式是通过 `setState` 来实现的，但是这种方式有一个缺点，就是当组件层级关系比较复杂，使用 `State` 方式会让组件变得非常复杂。比如，用户信息（用户名、用户头像）在页面的很多地方都要用到，最好有一个统一的状态提供者。`Provider` 是利用“生产者-消费者”模式解决状态管理问题的。
+
+首先，我们从 `pub.dev` 上获取 `provider`
+
+```yaml:
+dependencies;
+  provider: ^6.0.5
+```
+
+然后，我们在 `main.dart` 中使用 `Provider` 包装 `MyApp` 组件
+
+```dart
+import "package:flutter/material.dart";
+import 'package:provider/provider.dart';
+
+class Counter with ChangeNotifier {
+  int _count = 0;
+  int get count => _count;
+
+  void increment() {
+    _count++;
+    notifyListeners();
+  }
+}
+
+void main() {
+  runApp(
+    ChangeNotifierProvider<Counter>(
+      create: (context) => Counter(),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Provider Demo')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('You have pushed the button this many times:'),
+            Consumer<Counter>(
+              // 使用 Consumer 包裹需要更新的组件
+              builder: (context, counter, child) {
+                return Text(
+                  '${counter.count}',
+                  style: Theme.of(context).textTheme.headline4,
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Provider.of<Counter>(context, listen: false).increment();
+        },
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+```
+
+其中，`Provider` 需要放在状态的根节点上，这样所有的子组件都可以通过 `Provider.of` 来获取状态。
+
+- `ListenableProvider`：`Listenable` 是 `Flutter` 中的一个接口，它可以监听数据的变化，比如 `ValueNotifier`、`ChangeNotifier` 等。`ListenableProvider` 可以让我们在 `Listenable` 中获取数据。
+- `ChangeNotifierProvider`：`ChangeNotifier` 是 `Listenable` 的一个实现类，它可以监听数据的变化，当数据发生变化时，会通知所有的监听者。`ChangeNotifierProvider` 可以让我们在 `ChangeNotifier` 中获取数据。
+- `ValueListenableProvider`：`ValueListenableProvider` 可以让我们在 `ValueListenable` 中获取数据，将其提供给子树。
+- `StreamProvider`：`Stream` 是一种异步的数据流，它可以用来监听网络请求、数据库变化等事件。`StreamProvider` 可以让我们在 `Stream` 中获取数据。
 
 ## 连接前端与后端
 
