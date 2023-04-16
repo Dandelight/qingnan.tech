@@ -35,6 +35,102 @@ CSS 是 Web 开发的标准语言，因语法简洁、功能强大也被设计�
 
 > *Flutter In Action*, Manning.
 
+* `createState`: 该函数为 `StatefulWidget` 中创建 `State` 的方法，当 `StatefulWidget` 被创建时会立即执行 `createState` 。
+* `initState`: 该函数为 `State` 初始化调用，因此可以在此期间执行 `State` 各变量的初始赋值，同时也可以在此期间与服务端交互，获取服务端数据后调用 `setState` 来设置 `State`。该方法必须调用`super`，因为父类中会进行一些其他操作；不过，因为请求数据时间较长，所以在 `initState` 中执行网络请求，会导致 `Widget` 无法渲染，因此可以在 `didChangeDependencies` 中执行网络请求。
+* `didChangeDependencies`: 该函数是在该组件依赖的 `State` 发生变化时，即初始化(`initState`)时，或者是外部传递过来的数据发生改变(`InheritedWidget`)。例如：父组件在子组件创建时传入参数 `name`，子组件使用 `name`，那么当父组件的 `name` 更新时，子组件的 `name` 也会随之更新，并调用该方法通知，以便于更新**加工数据**
+* `build`: 主要是返回需要渲染的 `Widget` ，由于 `build` 会被调用多次，因此在该函数中**只能做返回 `Widget` 相关逻辑，一定不能执行其他逻辑**，尤其**不能进行网络请求**，因为 `build` 会被调用多次，如果执行网络请求，那么会导致多次执行网络请求，这是不合理的。如果需要执行网络请求，可以在 `initState` 中执行，或者在 `didChangeDependencies` 中执行。
+* `didUpdateWidget`: 该函数主要是在组件重新构建，比如说热重载，父组件发生 `build` 的情况下，子组件该方法才会被调用，其次该方法调用之后一定会再调用本组件中的 `build` 方法。
+* `deactivate`: 在组件被移除节点后会被调用，如果该组件被移除节点，然后未被插入到其他节点时，则会继续调用 `dispose` 释放组件
+* `dispose`: 释放组件，移除内存资源。注意 `Controller` **必须**在此方法中释放，否则会造成内存泄漏。重载后必须调用 `super.dispose`。
+* `reassemble`: 主要是提供开发阶段使用，在 debug 模式下，每次热重载都会调用该函数。
+
+下面是 `StateFulWidget` 的生命周期代码简介，以及通过 `widget`使用 `StatefulWidget` 从外侧接收到的数据（此数据一般为`final`仅供内部使用），也同时介绍了 `构造方法` 以及 `widget`的使用
+
+```js
+class HomeTabBar extends StatefulWidget {
+  final String title;
+
+  // 默认的构造方法，接收参数有几种形式
+  // 默认,必须要实现的
+  const HomeTabBar({Key? key}) : super(key: key);
+
+  // 当我们有其他构造方法的时候，必须要传入，否则要给定默认值，有三种情况
+  // 可以采用多个参数的形式传递，和dart学习的时候一样，需要按顺序传递参数
+  const HomeTabBar(this.title, {Key? key}) : super(key: key);
+
+  // 下面的方式为推荐手段
+  // 使用对象的方式传递参数，该方式为默认方式，参数前需要加入 require，必须要传递参数
+  // 注意：如果参数为可选类型 String? title,那么不需要加上 require
+  const HomeTabBar({Key? key, required this.title}) : super(key: key);
+  //使用对象的方式传递参数，当使用默认值的时候，使用该方式传递，不传使用默认值
+  const HomeTabBar({Key? key, title='Marshal'}) : super(key: key);
+
+  @override
+  State<HomeTabBar> createState() => _HomeTabBarState();
+}
+
+class _HomeTabBarState extends State<HomeTabBar> {
+  int age = 10;
+  //初始化状态时使用，我们可以在这里设置state状态
+  //也可以请求网络数据后更新组件状态
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  //state发生变化时会回调该方法,可以是class
+  //也可以是InheritedWidget,即其实际所属的组件(上面那个组件)
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
+  //父组件发生变化时，会调用该方法，随后调用 build 方法重新渲染，用的少
+  @override
+  void didUpdateWidget(covariant HomeTabBar oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+  }
+
+  //组件被从父节点移除时回调的方法，如果没插入到其他节点会随后调用dispose完全释放
+  //如果该组件被移除，但是仍然被组件关联，则不会随后释放并调用dispose
+  @override
+  void deactivate() {
+    // TODO: implement deactivate
+    super.deactivate();
+  }
+
+  //完全释放该组件时调用,不建议做本组件的内存操作，可以移除其他组件或者保存的内容
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  //debug情况下调用，每次热重载都会回调
+  @override
+  void reassemble() {
+    // TODO: implement reassemble
+    super.reassemble();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+      return Text('名字:${widget.title}，年龄:$age');
+  }
+}
+```
+
+> 作者：剪刀石头布啊
+>
+> 链接：https://juejin.cn/post/7078586717603069988
+>
+> 来源：稀土掘金
+>
+> 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
 ## 多 `children` 布局组件
 
 * Flex 布局
