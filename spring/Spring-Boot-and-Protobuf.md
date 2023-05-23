@@ -1,6 +1,5 @@
 ---
 title: Spring Boot and Protobuf
-typora-root-url: Spring Boot and Protobuf
 date: 2023-04-23 19:02:48
 tags:
 ---

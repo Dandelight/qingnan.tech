@@ -1,7 +1,10 @@
 version: 2
 updates:
-- package-ecosystem: npm
+- package-ecosystem: pip
   directory: "/"
   schedule:
-    interval: daily
+    interval: weekly
+    day: 'sunday'
+    time: '10:00'
+    timezone: "Asia/Shanghai"
   open-pull-requests-limit: 20
