@@ -3,6 +3,7 @@
 
 title: My sample book
 author: The Jupyter Book Community
+copyright: 蜀ICP备2023014400-1
 logo: logo.png
 
 # Force re-execution of notebooks on each build.
